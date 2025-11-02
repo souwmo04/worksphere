@@ -64,7 +64,6 @@ class Auth {
                 this.login(data.tokens.access, data.user);
                 return { success: true, data };
             } else {
-                // Handle different error formats
                 const errorMsg = data.error || data.detail || 
                                (data.username && data.username[0]) ||
                                (data.email && data.email[0]) ||
@@ -77,7 +76,7 @@ class Auth {
         }
     }
     
-    static async googleAuth(accessToken) {
+    static async googleAuth(credential) {
         try {
             const response = await fetch(`${this.API_BASE}/google/`, {
                 method: 'POST',
@@ -85,7 +84,7 @@ class Auth {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    access_token: accessToken
+                    credential: credential
                 })
             });
             
@@ -98,6 +97,7 @@ class Auth {
                 return { success: false, error: data.error || data.detail || 'Google authentication failed' };
             }
         } catch (error) {
+            console.error('Google auth API error:', error);
             return { success: false, error: 'Network error. Please try again.' };
         }
     }
@@ -105,109 +105,176 @@ class Auth {
 
 // Google OAuth Handler
 class GoogleAuth {
-    static clientId = '20168939763-v261is7435m1kbu4gbtfvvr3nf5ut09.apps.googleusercontent.com';
+    static clientId = '20168939763-v261is7435m1kbu4gbtffvvr3nf5ut09.apps.googleusercontent.com';
     
     static initialize() {
+        console.log('=== GOOGLE AUTH INITIALIZATION STARTED ===');
+        
+        // Check if Google API is loaded
         if (typeof google === 'undefined') {
-            console.warn('Google API not loaded');
+            console.error('❌ Google API not loaded');
+            this.showFallbackButtons();
             return;
         }
         
-        google.accounts.id.initialize({
-            client_id: this.clientId,
-            callback: this.handleCredentialResponse.bind(this),
-            auto_select: false,
-            cancel_on_tap_outside: true,
-        });
-        
-        // Render Google Sign In button
-        this.renderButton();
-    }
-    
-    static renderButton() {
-        if (typeof google === 'undefined') return;
-        
-        const googleSignIn = document.getElementById('googleSignIn');
-        const googleSignUp = document.getElementById('googleSignUp');
-        
-        if (googleSignIn) {
-            google.accounts.id.renderButton(googleSignIn, {
-                theme: 'outline',
-                size: 'large',
-                width: '100%',
-                text: 'continue_with',
-                shape: 'rectangular'
-            });
-        }
-        
-        if (googleSignUp) {
-            google.accounts.id.renderButton(googleSignUp, {
-                theme: 'outline',
-                size: 'large',
-                width: '100%',
-                text: 'signup_with',
-                shape: 'rectangular'
-            });
-        }
-        
-        // Also show One Tap prompt
-        google.accounts.id.prompt(notification => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                // Continue with normal flow
-            }
-        });
-    }
-    
-    static async handleCredentialResponse(response) {
-        console.log('Google auth response received');
-        
-        const submitBtn = document.querySelector('.btn-google');
-        const originalText = submitBtn ? submitBtn.innerHTML : '';
-        
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-            submitBtn.disabled = true;
+        // Check if google.accounts.id exists
+        if (!google.accounts || !google.accounts.id) {
+            console.error('❌ Google accounts API not available');
+            this.showFallbackButtons();
+            return;
         }
         
         try {
-            // Get the access token from the credential response
-            const accessToken = response.credential;
+            console.log('🔄 Initializing Google OAuth with Client ID:', this.clientId);
             
-            // Send to our backend
-            const result = await Auth.googleAuth(accessToken);
+            google.accounts.id.initialize({
+                client_id: this.clientId,
+                callback: this.handleCredentialResponse.bind(this),
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
             
-            if (result.success) {
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            } else {
-                showError(result.error);
-                if (submitBtn) {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
-            }
+            console.log('✅ Google OAuth initialized successfully');
+            this.renderButtons();
+            
         } catch (error) {
-            console.error('Google auth error:', error);
-            showError('Authentication failed. Please try again.');
-            if (submitBtn) {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
+            console.error('❌ Google OAuth initialization failed:', error);
+            this.showFallbackButtons();
         }
     }
     
-    static manualSignIn() {
-        if (typeof google === 'undefined') {
-            showError('Google Sign In not available. Please check your connection.');
-            return;
+    static renderButtons() {
+        try {
+            console.log('🎨 Rendering Google buttons...');
+            
+            const googleSignIn = document.getElementById('googleSignIn');
+            const googleSignUp = document.getElementById('googleSignUp');
+            
+            if (googleSignIn) {
+                console.log('Found Google Sign In element');
+                googleSignIn.innerHTML = '';
+                google.accounts.id.renderButton(googleSignIn, {
+                    theme: 'outline',
+                    size: 'large',
+                    width: 400,
+                    text: 'continue_with'
+                });
+                console.log('✅ Google Sign In button rendered');
+            }
+            
+            if (googleSignUp) {
+                console.log('Found Google Sign Up element');
+                googleSignUp.innerHTML = '';
+                google.accounts.id.renderButton(googleSignUp, {
+                    theme: 'outline',
+                    size: 'large',
+                    width: 400,
+                    text: 'signup_with'
+                });
+                console.log('✅ Google Sign Up button rendered');
+            }
+            
+        } catch (error) {
+            console.error('❌ Google button rendering failed:', error);
+            this.showFallbackButtons();
         }
-        
-        google.accounts.id.prompt();
     }
+    
+    static async handleCredentialResponse(response) {
+        console.log('🔐 Google OAuth response received');
+        
+        // Show loading state
+        const buttons = document.querySelectorAll('.btn-google');
+        buttons.forEach(btn => {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in with Google...';
+            btn.disabled = true;
+        });
+        
+        try {
+            console.log('📡 Sending credential to backend...');
+            const result = await Auth.googleAuth(response.credential);
+            
+            if (result.success) {
+                console.log('✅ Google authentication successful!');
+                showSuccess('Welcome! Google authentication successful.');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } else {
+                console.error('❌ Backend authentication failed:', result.error);
+                showError('Google login failed: ' + result.error);
+                this.resetButtons();
+            }
+        } catch (error) {
+            console.error('❌ Authentication error:', error);
+            showError('Login failed. Please try again.');
+            this.resetButtons();
+        }
+    }
+    
+    static resetButtons() {
+        setTimeout(() => {
+            this.renderButtons();
+        }, 3000);
+    }
+    
+    static showFallbackButtons() {
+        console.log('🔄 Showing fallback Google buttons');
+        const googleButtons = document.querySelectorAll('.btn-google');
+        
+        googleButtons.forEach(btn => {
+            btn.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px 16px; border: 1px solid #dadce0; border-radius: 4px; background: white; color: #3c4043; cursor: pointer;">
+                    <i class="fab fa-google" style="color: #4285F4;"></i>
+                    <span>${btn.id.includes('SignUp') ? 'Sign up with Google' : 'Continue with Google'}</span>
+                </div>
+            `;
+            btn.onclick = (e) => {
+                e.preventDefault();
+                showError('Google Sign In is not available. Please check:<br>1. Google APIs are enabled<br>2. Client ID is correct<br>3. Authorized origins are set');
+                console.error('Google OAuth Debug Info:');
+                console.error('- Client ID:', this.clientId);
+                console.error('- Google API loaded:', typeof google !== 'undefined');
+                console.error('- Google accounts:', typeof google?.accounts);
+            };
+        });
+    }
+}
+
+// Initialize Google OAuth
+function initializeGoogleOAuth() {
+    console.log('🚀 STARTING GOOGLE OAUTH SETUP...');
+    
+    // Method 1: Check if already loaded
+    if (typeof google !== 'undefined') {
+        console.log('✅ Google API already loaded');
+        GoogleAuth.initialize();
+        return;
+    }
+    
+    // Method 2: Load Google API script
+    console.log('📥 Loading Google OAuth script...');
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+        console.log('✅ Google OAuth script loaded successfully');
+        setTimeout(() => {
+            GoogleAuth.initialize();
+        }, 1000);
+    };
+    script.onerror = (error) => {
+        console.error('❌ FAILED to load Google OAuth script:', error);
+        GoogleAuth.showFallbackButtons();
+    };
+    
+    document.head.appendChild(script);
 }
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Content Loaded - Initializing auth page...');
     initializeAuthPage();
 });
 
@@ -218,10 +285,10 @@ function initializeAuthPage() {
         return;
     }
     
+    console.log('🔧 Initializing authentication page...');
+    
     // Initialize Google OAuth
-    setTimeout(() => {
-        GoogleAuth.initialize();
-    }, 1000);
+    initializeGoogleOAuth();
     
     // Form toggling
     const showSignup = document.getElementById('showSignup');
@@ -262,18 +329,6 @@ function initializeAuthPage() {
             confirmInput.addEventListener('input', validatePasswords);
         }
     }
-    
-    // Manual Google buttons as fallback
-    const googleSignIn = document.getElementById('googleSignIn');
-    const googleSignUp = document.getElementById('googleSignUp');
-    
-    if (googleSignIn && !googleSignIn.querySelector('div[role="button"]')) {
-        googleSignIn.addEventListener('click', () => GoogleAuth.manualSignIn());
-    }
-    
-    if (googleSignUp && !googleSignUp.querySelector('div[role="button"]')) {
-        googleSignUp.addEventListener('click', () => GoogleAuth.manualSignIn());
-    }
 }
 
 async function handleLogin(e) {
@@ -282,23 +337,19 @@ async function handleLogin(e) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     
-    // Basic validation
     if (!email || !password) {
         showError('Please fill in all fields');
         return;
     }
     
-    // Show loading state
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
     submitBtn.disabled = true;
     
-    // Attempt login
     const result = await Auth.loginUser(email, password);
     
     if (result.success) {
-        // Redirect to dashboard
         window.location.href = 'dashboard.html';
     } else {
         showError(result.error);
@@ -322,7 +373,6 @@ async function handleSignup(e) {
     const confirmPassword = document.getElementById('confirmPassword').value;
     const agreeTerms = document.getElementById('agreeTerms').checked;
     
-    // Validation
     if (!formData.first_name || !formData.last_name || !formData.email || 
         !formData.username || !formData.user_type || !formData.password) {
         showError('Please fill in all fields');
@@ -344,17 +394,14 @@ async function handleSignup(e) {
         return;
     }
     
-    // Show loading state
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
     submitBtn.disabled = true;
     
-    // Attempt registration
     const result = await Auth.registerUser(formData);
     
     if (result.success) {
-        // Redirect to dashboard
         window.location.href = 'dashboard.html';
     } else {
         showError(result.error);
@@ -380,15 +427,16 @@ function validatePasswords() {
 function showError(message) {
     const errorElement = document.getElementById('errorMessage');
     if (errorElement) {
-        errorElement.textContent = message;
+        errorElement.innerHTML = message;
         errorElement.style.display = 'block';
+        errorElement.style.background = 'rgba(239, 68, 68, 0.1)';
+        errorElement.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+        errorElement.style.color = 'var(--error)';
         
-        // Auto-hide error after 5 seconds
         setTimeout(() => {
             errorElement.style.display = 'none';
         }, 5000);
     } else {
-        // Fallback alert
         alert(message);
     }
 }
@@ -404,9 +452,6 @@ function showSuccess(message) {
         
         setTimeout(() => {
             errorElement.style.display = 'none';
-            errorElement.style.background = '';
-            errorElement.style.borderColor = '';
-            errorElement.style.color = '';
         }, 3000);
     }
 }

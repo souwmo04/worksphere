@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WorkSphere</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <div class="logo-brain">🧠</div>
+                <span class="logo-text">WorkSphere</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-page="jobs">Jobs</a>
+                <a href="#" class="nav-link" data-page="profile">Profile</a>
+                <div class="user-menu">
+                    <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="User" class="user-avatar">
+                    <span id="userName">User</span>
+                    <div class="dropdown-menu">
+                        <a href="#" onclick="Auth.logout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="User" class="user-avatar-large">
+                    <div class="user-details">
+                        <h3 id="userFullName">Loading...</h3>
+                        <span class="user-type" id="userType">Worker</span>
+                    </div>
+                </div>
+                <div class="trust-score">
+                    <div class="score-circle">
+                        <span id="trustScore">0</span>
+                    </div>
+                    <span>Trust Score</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="jobs">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Find Jobs</span>
+                </a>
+                <a href="#" class="nav-item" data-page="my-jobs">
+                    <i class="fas fa-tasks"></i>
+                    <span>My Jobs</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" data-page="messages">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="nav-item" data-page="earnings">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Earnings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back to your AI-powered workspace</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="activeJobs">0</h3>
+                            <span>Active Jobs</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedJobs">0</h3>
+                            <span>Completed</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalEarnings">$0</h3>
+                            <span>Total Earnings</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="trustScoreCard">0</h3>
+                            <span>Trust Score</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Jobs -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>AI Recommended Jobs</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="jobs-grid" id="recommendedJobs">
+                        <!-- Jobs will be loaded here -->
+                        <div class="loading">Loading recommended jobs...</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <div class="activity-list" id="recentActivity">
+                        <div class="activity-item">
+                            <i class="fas fa-user-plus"></i>
+                            <div class="activity-content">
+                                <p>Welcome to WorkSphere! Your AI Career Passport is ready.</p>
+                                <span class="activity-time">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other pages will go here -->
+            <div class="page" id="jobs-page" style="display: none;">
+                <div class="page-header">
+                    <h1>Find Jobs</h1>
+                    <p>AI-powered job matching just for you</p>
+                </div>
+                <!-- Jobs page content -->
+            </div>
+
+            <div class="page" id="profile-page" style="display: none;">
+                <div class="page-header">
+                    <h1>My Profile</h1>
+                    <p>Manage your AI Career Passport</p>
+                </div>
+                <!-- Profile page content -->
+            </div>
+        </main>
+    </div>
+    <!-- Theme Toggle -->
+    <div class="dashboard-theme-toggle">
+    <button id="themeBtn" class="theme-toggle-btn">
+        <i class="fas fa-moon"></i>
+    </button>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

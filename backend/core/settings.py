@@ -124,11 +124,20 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-# CORS Settings (for React frontend)
+# Update your CORS settings in settings.py - ADD THESE ORIGINS:
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:8000", 
+    "http://127.0.0.1:8000",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
 ]
+
+# Also add this setting for Google OAuth:
+GOOGLE_OAUTH2_CLIENT_ID = '20168939763-v261is7435m1kbu4gbtfvvr3nf5ut09.apps.googleusercontent.com'
 
 CORS_ALLOW_CREDENTIALS = True
 
