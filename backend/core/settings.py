@@ -24,11 +24,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # ADD THIS FOR ALLAUTH
 
     # Third party
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'allauth',  # ADD THIS
+    'allauth.account',  # ADD THIS
+    'allauth.socialaccount',  # ADD THIS
+    'allauth.socialaccount.providers.google',  # ADD THIS
 
     # Local apps
     'users',
@@ -43,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # ADD THIS LINE
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -128,3 +134,34 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Optional: Allow all origins in development
 CORS_ALLOW_ALL_ORIGINS = True
+
+# ===== GOOGLE OAUTH SETTINGS =====
+# Site ID for allauth
+SITE_ID = 1
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+# Social account settings
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}

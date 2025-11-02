@@ -1,59 +1,68 @@
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from django.contrib.auth.models import User
-from .serializers import UserRegistrationSerializer, UserProfileSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def register_user(request):
+def google_auth(request):
+    """
+    Handle Google OAuth authentication and return JWT tokens
+    """
+    access_token = request.data.get('access_token')
+    
+    if not access_token:
+        return Response({'error': 'Access token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
-        serializer = UserRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            
-            # Generate JWT tokens
-            refresh = RefreshToken.for_user(user)
-            
-            return Response({
-                'message': 'User registered successfully',
-                'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'email': user.email,
-                    'user_type': user.profile.user_type
-                },
-                'tokens': {
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh)
-                }
-            }, status=status.HTTP_201_CREATED)
+        # Verify token with Google
+        google_response = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            params={'access_token': access_token}
+        )
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login_user(request):
-    from django.contrib.auth import authenticate
-    
-    username = request.data.get('username')
-    password = request.data.get('password')
-    
-    user = authenticate(username=username, password=password)
-    
-    if user:
+        if google_response.status_code != 200:
+            return Response({'error': 'Invalid Google access token'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        google_data = google_response.json()
+        email = google_data.get('email')
+        
+        if not email:
+            return Response({'error': 'Email not provided by Google'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        first_name = google_data.get('given_name', '')
+        last_name = google_data.get('family_name', '')
+        picture = google_data.get('picture', '')
+        
+        # Find or create user
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Create new user
+            username = email.split('@')[0]
+            # Ensure username is unique
+            base_username = username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+                
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name
+            )
+            # Set unused password for social auth users
+            user.set_unusable_password()
+            user.save()
+        
+        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
+        
         return Response({
-            'message': 'Login successful',
+            'message': 'Google authentication successful',
             'user': {
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
                 'user_type': user.profile.user_type
             },
             'tokens': {
@@ -61,14 +70,6 @@ def login_user(request):
                 'refresh': str(refresh)
             }
         })
-    
-    return Response({
-        'error': 'Invalid credentials'
-    }, status=status.HTTP_401_UNAUTHORIZED)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_profile(request):
-    profile = request.user.profile
-    serializer = UserProfileSerializer(profile)
-    return Response(serializer.data)
+        
+    except Exception as e:
+        return Response({'error': f'Authentication failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

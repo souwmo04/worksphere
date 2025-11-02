@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkSphere - AI-Powered Freelance Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeBtn" class="theme-btn">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'">
+                <div class="logo-brain">🧠</div>
+                <span class="logo-text">WorkSphere</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#testimonials">Success Stories</a>
+                <a href="login.html" class="login-btn">Sign In</a>
+                <a href="login.html" class="signup-btn">Get Started</a>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="floating-brain">🧠</div>
+            <div class="floating-ai">🤖</div>
+            <div class="floating-code">💻</div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>AI-Powered Platform</span>
+                </div>
+                <h1 class="hero-title">
+                    Where <span class="gradient-text">Intelligence</span><br>
+                    Meets Opportunity
+                </h1>
+                <p class="hero-subtitle">
+                    Bangladesh's smartest freelance ecosystem. Connect with verified clients, 
+                    get AI-matched projects, and grow your career with intelligent tools.
+                </p>
+                <div class="hero-buttons">
+                    <a href="login.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Start Freelancing
+                    </a>
+                    <a href="login.html" class="btn btn-secondary">
+                        <i class="fas fa-briefcase"></i>
+                        Hire Talent
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number" data-count="650000">0</div>
+                        <div class="stat-label">Freelancers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="25000">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" data-count="98">0</div>
+                        <div class="stat-label">% Success Rate</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="glass-card main-card">
+                    <div class="card-header">
+                        <div class="user-avatar">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="User">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">Fahim F.</div>
+                            <div class="user-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Full Stack Developer</h3>
+                        <div class="skills">
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">AI/ML</span>
+                        </div>
+                        <div class="match-score">
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 95%"></div>
+                            </div>
+                            <span>95% Match</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="floating-element job-card">
+                    <div class="job-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="job-info">
+                        <div class="job-title">Website Development</div>
+                        <div class="job-budget">$500 - $800</div>
+                    </div>
+                </div>
+
+                <div class="floating-element ai-card">
+                    <div class="ai-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="ai-text">AI Career Passport</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Smart Features for Smart Work</h2>
+                <p class="section-subtitle">Powered by artificial intelligence to enhance your freelance journey</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Job Matching</h3>
+                    <p>Our intelligent algorithm matches you with perfect projects based on your skills, experience, and preferences.</p>
+                    <div class="feature-badge">Smart</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Escrow</h3>
+                    <p>Payments held securely in escrow until work is completed and verified. No more payment worries.</p>
+                    <div class="feature-badge">Safe</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Trust Scoring</h3>
+                    <p>Build credibility with our AI-driven trust score that reflects your reliability and work quality.</p>
+                    <div class="feature-badge">Reliable</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Skill Growth</h3>
+                    <p>Personalized learning paths and skill recommendations to advance your career continuously.</p>
+                    <div class="feature-badge">Growth</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How WorkSphere Works</h2>
+                <p class="section-subtitle">Simple steps to start your freelance journey</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Create Profile</h3>
+                    <p>Build your AI Career Passport with skills, portfolio, and experience</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Get Matched</h3>
+                    <p>Receive AI-recommended projects that match your expertise</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Work & Earn</h3>
+                    <p>Complete projects with secure payments and build your reputation</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <div class="step-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Grow Faster</h3>
+                    <p>Access learning resources and advance your career with AI guidance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Career?</h2>
+                <p>Join thousands of freelancers building their future with AI-powered tools</p>
+                <a href="login.html" class="btn btn-large">
+                    <i class="fas fa-bolt"></i>
+                    Create Your AI Career Passport
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-brain">🧠</div>
+                    <span class="logo-text">WorkSphere</span>
+                    <p>Intelligent freelance platform powered by AI</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Platform</h4>
+                        <a href="#">For Freelancers</a>
+                        <a href="#">For Companies</a>
+                        <a href="#">How It Works</a>
+                        <a href="#">Pricing</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="#">About Us</a>
+                        <a href="#">The Brain Team</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#">Blog</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">Community</a>
+                        <a href="#">Partners</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 WorkSphere. Built with ❤️ by The Brain Team - NSU</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
